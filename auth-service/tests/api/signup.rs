@@ -2,6 +2,7 @@ use crate::helpers::{get_random_email, TestApp};
 
 #[tokio::test]
 pub async fn should_return_422_if_malformed_request() {
+
     let app = TestApp::new().await;
 
     let random_email = get_random_email();
@@ -21,4 +22,9 @@ pub async fn should_return_422_if_malformed_request() {
             test_case
         )
     }
+}
+
+#[tokio::test]
+pub async fn should_return_201_if_valid_input() {
+    todo!()
 }
