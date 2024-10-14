@@ -1,4 +1,5 @@
 pub mod routes;
+pub mod domain;
 
 use axum::{
     routing::{post, Router},
