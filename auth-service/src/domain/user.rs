@@ -1,7 +1,7 @@
 pub struct User {
-    email: String,
-    password: String,
-    requires_2fa: bool,
+    pub email: String,
+    pub password: String,
+    pub requires_2fa: bool,
 }
 
 impl User {
