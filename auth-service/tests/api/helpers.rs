@@ -1,4 +1,11 @@
-use auth_service::Application;
+use std::sync::Arc;
+use tokio::sync::RwLock;
+
+use auth_service::{
+    Application,
+    app_state::AppState,
+    services::hashmap_user_store::HashmapUserStore,
+};
 use reqwest;
 use uuid::Uuid;
 
@@ -8,20 +15,14 @@ pub struct TestApp {
 }
 
 impl TestApp {
-    pub async fn post_signup<Body>(&self, body: &Body) -> reqwest::Response
-    where
-        Body: serde::Serialize,
-    {
-        self.http_client
-            .post(&format!("{}/signup", &self.address))
-            .json(body)
-            .send()
-            .await
-            .expect("Failed to execute request.")
-    }
 
     pub async fn new() -> Self {
-        let app = Application::build("127.0.0.1:0")
+        let user_store = Arc::new(RwLock::new(HashmapUserStore::default()));
+        let app_state = AppState::new(user_store);
+
+
+
+        let app = Application::build("127.0.0.1:0", app_state)
             .await
             .expect("Failed to build application");
 
@@ -49,9 +50,15 @@ impl TestApp {
             .expect("Failed to execute request.")
     }
 
-    pub async fn signup(&self) -> reqwest::Response {
+
+    pub async fn post_signup<Body>(&self, body: &Body) -> reqwest::Response
+    where
+        Body: serde::Serialize,
+    {
+    
         self.http_client
             .post(&format!("{}/signup", &self.address))
+            .json(body)
             .send()
             .await
             .expect("Failed to execute request.")
