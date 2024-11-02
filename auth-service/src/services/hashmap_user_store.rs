@@ -1,9 +1,7 @@
 use crate::domain::{Email, Password, User, UserStore, UserStoreError};
 use std::collections::HashMap;
 
-// TODO: Create a new struct called `HashmapUserStore` containing a `users` field
-// which stores a `HashMap`` of email `String`s mapped to `User` objects.
-// Derive the `Default` trait for `HashmapUserStore`.
+
 #[derive(Default)]
 pub struct HashmapUserStore {
     users: HashMap<Email, User>,
