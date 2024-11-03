@@ -6,8 +6,6 @@ mod signup;
 mod verify_2fa;
 mod verify_token;
 
-
-
 fn main() {
     // login::login_returns_200();
     // logout::logout_returns_200();

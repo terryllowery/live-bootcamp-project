@@ -1,10 +1,6 @@
-
-
 use auth_service::{routes::SignupResponse, ErrorResponse};
 
-
 use crate::helpers::{get_random_email, TestApp};
-
 
 #[tokio::test]
 pub async fn should_return_201_if_valid_input() {
@@ -74,12 +70,12 @@ async fn should_return_400_if_invalid_input() {
 
         assert_eq!(
             response
-            .json::<ErrorResponse>()
-            .await
-            .expect("Could not deserialize response body to ErrorResponse")
-            .error,
+                .json::<ErrorResponse>()
+                .await
+                .expect("Could not deserialize response body to ErrorResponse")
+                .error,
             "Invalid credentails".to_owned()
-        ) 
+        )
     }
 }
 
@@ -105,14 +101,13 @@ async fn should_return_409_if_email_already_exists() {
 
     assert_eq!(
         response
-        .json::<ErrorResponse>()
-        .await
-        .expect("Could not deserialize response body to ErrorResponse")
-        .error,
+            .json::<ErrorResponse>()
+            .await
+            .expect("Could not deserialize response body to ErrorResponse")
+            .error,
         "User already exists".to_owned()
     );
 }
-
 
 #[tokio::test]
 pub async fn should_return_422_if_malformed_request() {
@@ -124,22 +119,22 @@ pub async fn should_return_422_if_malformed_request() {
 
     let test_cases = [
         serde_json::json!({
-        "password": "password123",
-        "require_2fs": true
-    }),
-    serde_json::json!({
-        "email": random_email,
-        "require_2fs": true
-    }),
-    serde_json::json!({
-        "email": random_email,
-        "password": "password123",
-    }),
-    serde_json::json!({
-        "email": random_email,
-        "password": "password123",
-        "require_2fs": "true"
-    })
+            "password": "password123",
+            "require_2fs": true
+        }),
+        serde_json::json!({
+            "email": random_email,
+            "require_2fs": true
+        }),
+        serde_json::json!({
+            "email": random_email,
+            "password": "password123",
+        }),
+        serde_json::json!({
+            "email": random_email,
+            "password": "password123",
+            "require_2fs": "true"
+        }),
     ];
 
     for test_case in test_cases.iter() {
