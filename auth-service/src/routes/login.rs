@@ -1,11 +1,9 @@
-use std::sync::RwLock;
-
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Error, Json};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use serde::{Deserialize, Serialize};
 
 use crate::{
     app_state::AppState,
-    domain::{password, AuthAPIError, Email, Password},
+    domain::{AuthAPIError, Email, Password},
 };
 
 pub async fn login(
@@ -28,12 +26,14 @@ pub async fn login(
         return Err(AuthAPIError::IncorrectCredentails);
     };
 
+    // TODO: Return user in the response
+    #[allow(unused_variables)]
     let user = match user_store.get_user(&email).await {
         Ok(user) => user,
         Err(_) => return Err(AuthAPIError::InvalidCredentials),
     };
 
-    Ok((StatusCode::OK.into_response()))
+    Ok(StatusCode::OK.into_response())
 }
 
 #[derive(Deserialize, Debug, Serialize)]
