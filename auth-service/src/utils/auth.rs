@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::domain::email::Email;
 
 use super::constants::JWT_COOKIE_NAME;
+use super::constants::JWT_SECRET;
 
 
 
