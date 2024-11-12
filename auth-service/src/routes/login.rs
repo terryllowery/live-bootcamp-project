@@ -15,7 +15,7 @@ pub async fn login(
 ) -> (CookieJar, Result<impl IntoResponse, AuthAPIError>) {
     let password = match Password::parse(request.password) {
         Ok(password) => password,
-        Err(_) => return(jar, Err(AuthAPIError::InvalidCredentials)),
+        Err(_) => return (jar, Err(AuthAPIError::InvalidCredentials)),
     };
 
     let email = match Email::parse(request.email) {
@@ -43,7 +43,7 @@ pub async fn login(
 
     let updated_jar = jar.add(auth_cookie);
 
-   (updated_jar, Ok(StatusCode::OK.into_response()))
+    (updated_jar, Ok(StatusCode::OK.into_response()))
 }
 
 #[derive(Deserialize, Debug, Serialize)]

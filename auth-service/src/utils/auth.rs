@@ -8,15 +8,13 @@ use crate::domain::email::Email;
 use super::constants::JWT_COOKIE_NAME;
 use super::constants::JWT_SECRET;
 
-
-
 // Create cookie with a new JWT auth token
 pub fn generate_auth_cookie(email: &Email) -> Result<Cookie<'static>, GenerateTokenError> {
     let token = generate_auth_token(email)?;
     Ok(create_auth_cookie(token))
 }
 
-// Create cookie and set the value to the passed-in token string 
+// Create cookie and set the value to the passed-in token string
 fn create_auth_cookie(token: String) -> Cookie<'static> {
     let cookie = Cookie::build((JWT_COOKIE_NAME, token))
         .path("/") // apple cookie to all URLs on the server

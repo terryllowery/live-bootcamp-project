@@ -21,6 +21,4 @@ fn set_token() -> String {
     secret
 }
 
-pub mod env {
-    
-}
+pub mod env {}
