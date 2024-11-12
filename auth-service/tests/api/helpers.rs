@@ -1,3 +1,4 @@
+use axum_extra::extract::cookie;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
@@ -5,10 +6,12 @@ use auth_service::{
     app_state::AppState, services::hashmap_user_store::HashmapUserStore, Application,
 };
 use reqwest;
+use reqwest::cookie::Jar;
 use uuid::Uuid;
 
 pub struct TestApp {
     pub address: String,
+    pub cookie_jar: Arc<Jar>,
     pub http_client: reqwest::Client,
 }
 
@@ -28,11 +31,16 @@ impl TestApp {
         #[allow(clippy::let_underscore_future)]
         let _ = tokio::spawn(app.run());
 
-        let http_client = reqwest::Client::new();
+        let cookie_jar = Arc::new(Jar::default());
+        let http_client = reqwest::Client::builder()
+            .cookie_provider(cookie_jar.clone())
+            .build()
+            .unwrap();
 
         // Create a new TestApp instance and return it
         Self {
             address,
+            cookie_jar,
             http_client,
         }
     }
