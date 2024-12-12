@@ -23,17 +23,16 @@ pub async fn login(
         Err(_) => return (jar, Err(AuthAPIError::InvalidCredentials)),
     };
 
-    let user_store = state.user_store.read().await;
+    let user_store = &state.user_store.read().await;
 
     if user_store.validate_user(&email, &password).await.is_err() {
         return (jar, Err(AuthAPIError::IncorrectCredentails));
     };
 
-    // TODO: Return user in the response
-    #[allow(unused_variables)]
+
     let user = match user_store.get_user(&email).await {
         Ok(user) => user,
-        Err(_) => return (jar, Err(AuthAPIError::InvalidCredentials)),
+        Err(_) => return (jar, Err(AuthAPIError::IncorrectCredentails)),
     };
 
     let auth_cookie = match generate_auth_cookie(&user.email) {

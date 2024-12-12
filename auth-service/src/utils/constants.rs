@@ -2,18 +2,15 @@ use dotenvy::dotenv;
 use lazy_static::lazy_static;
 use std::env as std_env;
 
-pub const JWT_COOKIE_NAME: &str = "jwt";
 
 lazy_static! {
     pub static ref JWT_SECRET: String = set_token();
 }
 
-// This is definitely NOT a good secret. We will update it soon!
-// const JWT_SECRET: &str = "secret";
 
 fn set_token() -> String {
     dotenv().ok();
-    let secret = std_env::var("JWT_SECRET").expect("JWT_SECRET_ENV_VAR must be set");
+    let secret = std_env::var("JWT_SECRET_ENV_VAR").expect("JWT_SECRET_ENV_VAR must be set");
 
     if secret.is_empty() {
         panic!("JWT_SECRET_ENV_VAR must be set");
@@ -21,4 +18,16 @@ fn set_token() -> String {
     secret
 }
 
-pub mod env {}
+pub mod env {
+    pub const JWT_SECRET_ENV_VAR: &str = "JWT_SECRET";
+}
+
+pub const JWT_COOKIE_NAME: &str = "jwt";
+
+pub mod prod {
+    pub const APP_ADDRESS: &str = "0.0.0.0:3000";
+}
+
+pub mod test {
+    pub const APP_ADDRESS: &str = "127.0.0.1:0";
+}

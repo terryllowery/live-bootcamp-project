@@ -2,9 +2,11 @@ use crate::helpers::{get_random_email, TestApp};
 use auth_service::{utils::constants::JWT_COOKIE_NAME, ErrorResponse};
 
 #[tokio::test]
-async fn should_return_200_if_valid_credentials_add_2fa_disabled() {
+async fn should_return_200_if_valid_credentials_and_2fa_disabled() {
     let app = TestApp::new().await;
+
     let random_email = get_random_email();
+
     let signup_body = serde_json::json!({
         "email": random_email,
         "password": "password12345",
@@ -12,15 +14,16 @@ async fn should_return_200_if_valid_credentials_add_2fa_disabled() {
     });
 
     let respoonse = app.post_signup(&signup_body).await;
+
     assert_eq!(respoonse.status().as_u16(), 201);
 
     let login_body = serde_json::json!({
         "email": random_email,
         "password": "password12345",
-        "requires2FA": false,
     });
 
-    let response = app.login(&login_body).await;
+    let response = app.post_login(&login_body).await;
+
     assert_eq!(response.status().as_u16(), 200);
 
     let auth_cookie = response
@@ -30,14 +33,13 @@ async fn should_return_200_if_valid_credentials_add_2fa_disabled() {
 
     assert!(!auth_cookie.value().is_empty());
 }
+
 #[tokio::test]
 async fn should_return_400_if_invalid_input() {
-    // Call the log-in route with invalid credentials and assert that a
-    // 400 HTTP status code is returned along with the appropriate error message.
     let app = TestApp::new().await;
+
     let random_email = get_random_email();
 
-    // Create user
     let signup_body = serde_json::json!({
         "email": random_email,
         "password": "password1234",
@@ -45,14 +47,9 @@ async fn should_return_400_if_invalid_input() {
     });
 
     let response = app.post_signup(&signup_body).await;
+
     assert_eq!(response.status().as_u16(), 201);
 
-    // Write a test case for each of the invalid inputs
-    // 1. Invalid email
-    // 2.Invalid password
-    // 3. Empty Email
-    // 4. Empty Password
-    // 5. empty email and password
     let test_cases = vec![
         ("invalid_email", "password123"),
         (random_email.as_str(), "invalid"),
@@ -66,7 +63,8 @@ async fn should_return_400_if_invalid_input() {
             "password": password,
         });
 
-        let response = app.login(&login_body).await;
+        let response = app.post_login(&login_body).await;
+
         assert_eq!(
             response.status().as_u16(),
             400,
@@ -78,16 +76,18 @@ async fn should_return_400_if_invalid_input() {
 
 #[tokio::test]
 async fn should_return_401_if_invalid_credentials() {
-    // Call the log-in route with incorrect credentials and assert
-    // that a 401 HTTP status code is returned along with the appropriate error message.
     let app = TestApp::new().await;
+
     let random_email = get_random_email();
+
     let signup_body = serde_json::json!({
         "email": random_email,
         "password": "password1234",
         "requires2FA": false,
     });
+
     let response = app.post_signup(&signup_body).await;
+
     assert_eq!(response.status().as_u16(), 201);
 
     let test_cases = vec![
@@ -101,7 +101,8 @@ async fn should_return_401_if_invalid_credentials() {
             "email": email,
             "password": password,
         });
-        let response = app.login(&login_body).await;
+        let response = app.post_login(&login_body).await;
+        
         assert_eq!(
             response.status().as_u16(),
             401,
@@ -118,11 +119,13 @@ async fn should_return_401_if_invalid_credentials() {
         );
     }
 }
+
 #[tokio::test]
 pub async fn should_return_422_when_malformed_credentials() {
     let app = TestApp::new().await;
+
     let random_email = get_random_email();
-    // gen a 201 test case
+
     let signup_body = serde_json::json!({
         "email": random_email,
         "password": "password1234",
@@ -130,9 +133,10 @@ pub async fn should_return_422_when_malformed_credentials() {
     });
 
     let response = app.post_signup(&signup_body).await;
+
     assert_eq!(response.status().as_u16(), 201);
 
-    // gen a 422 test case
+
     let test_cases = [
         serde_json::json!({
             "password": "password123",
@@ -143,8 +147,9 @@ pub async fn should_return_422_when_malformed_credentials() {
         serde_json::json!({}),
     ];
 
-    for test_case in test_cases.iter() {
-        let response = app.post_signup(test_case).await;
+    for test_case in test_cases {
+        let response = app.post_signup(&test_case).await;
+        
         assert_eq!(
             response.status().as_u16(),
             422,
